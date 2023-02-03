@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { preview } from "../assets";
-import { getRandomPrompt } from "../utils";
-import { FormField, Loader } from "../components";
+import { preview } from '../assets';
+import { getRandomPrompt } from '../utils';
+import { FormField, Loader } from '../components';
 
 const CreatePost = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "",
-    prompt: "",
-    photo: "",
+    name: '',
+    prompt: '',
+    photo: '',
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
@@ -30,15 +30,18 @@ const CreatePost = () => {
       try {
         setGeneratingImg(true);
         //https://dalle-arbb.onrender.com/api/v1/dalle
-        const response = await fetch("http://localhost:8080/api/v1/dalle", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            prompt: form.prompt,
-          }),
-        });
+        const response = await fetch(
+          `https://aimg-server.vercel.app/api/v1/dalle`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              prompt: form.prompt,
+            }),
+          }
+        );
 
         const data = await response.json();
         setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
@@ -48,7 +51,7 @@ const CreatePost = () => {
         setGeneratingImg(false);
       }
     } else {
-      alert("Please provide proper prompt");
+      alert('Please provide proper prompt');
     }
   };
 
@@ -58,53 +61,58 @@ const CreatePost = () => {
     if (form.prompt && form.photo) {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:8080/api/v1/post", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...form }),
-        });
+        const response = await fetch(
+          `https://aimg-server.vercel.app/api/v1/post`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ...form }),
+          }
+        );
 
         await response.json();
-        alert("Success");
-        navigate("/");
+        alert('Success');
+        navigate('/');
       } catch (err) {
         alert(err);
       } finally {
         setLoading(false);
       }
     } else {
-      alert("Please generate an image with proper details");
+      alert('Please generate an image with proper details');
     }
   };
 
   return (
     <section className="max-w-7xl mx-auto">
       <div>
-        <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
+        <h1 className="font-extrabold text-[#222328] text-[32px]">
+          Tạo hình ảnh
+        </h1>
         <p className="mt-2 text-[#666e75] text-[14px] max-w-[500px]">
-          Generate an imaginative image through DALL-E AI and share it with the
-          community
+          Hãy sử dụng trí tưởng tượng phong phú của bạn, và để AI sẽ xử lý những
+          phần còn lại.
         </p>
       </div>
 
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-5">
           <FormField
-            labelName="Your Name"
+            labelName="Biệt danh của bạn là gì ?"
             type="text"
             name="name"
-            placeholder="Ex., john doe"
+            placeholder="Ví dụ: Trí Mộng Mơ"
             value={form.name}
             handleChange={handleChange}
           />
 
           <FormField
-            labelName="Prompt"
+            labelName="Bạn đang tưởng tượng gì zậy ?"
             type="text"
             name="prompt"
-            placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
+            placeholder="Hai con mèo đang đánh nhau trên sao hỏa, tranh giả tưởng"
             value={form.prompt}
             handleChange={handleChange}
             isSurpriseMe
@@ -140,20 +148,20 @@ const CreatePost = () => {
             onClick={generateImage}
             className=" text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
           >
-            {generatingImg ? "Generating..." : "Generate"}
+            {generatingImg ? 'Đợi xíu...' : 'Hiện nguyên hình'}
           </button>
         </div>
 
         <div className="mt-10">
           <p className="mt-2 text-[#666e75] text-[14px]">
-            ** Once you have created the image you want, you can share it with
-            others in the community **
+            ** Nếu bạn cảm thấy mọi người nên được thưởng thức tác phẩm mà bạn
+            vừa tạo ra thì hãy nhấn nút chia sẻ nhé ! **
           </p>
           <button
             type="submit"
             className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
           >
-            {loading ? "Sharing..." : "Share with the Community"}
+            {loading ? 'Đang tải lên á...' : 'Chia sẻ'}
           </button>
         </div>
       </form>
